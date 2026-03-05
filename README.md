@@ -28,6 +28,26 @@ Join our growing community of AI app builders on **Reddit**: [r/dyadbuilders](ht
 
 If you're interested in contributing to dyad, please read our [contributing](./CONTRIBUTING.md) doc.
 
+### Syncing from upstream
+
+If you're working from a fork, keep your branch up to date with the official repo:
+
+```bash
+git fetch upstream
+git rebase upstream/main
+git push origin main
+```
+
+To keep the `dev` branch (with personal build customizations) in sync:
+
+```bash
+git checkout main
+git fetch upstream && git merge upstream/main
+git checkout dev
+git rebase main
+git push origin dev --force-with-lease
+```
+
 ## License
 
 - All the code in this repo outside of `src/pro` is open-source and licensed under Apache 2.0 - see [LICENSE](./LICENSE).

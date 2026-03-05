@@ -61,8 +61,8 @@ async function getServerTime(): Promise<number> {
   }
 }
 
-/** Maximum number of free agent messages per 24-hour window */
-export const FREE_AGENT_QUOTA_LIMIT = 5;
+/** Maximum number of free agent messages per 24-hour window (effectively unlimited) */
+export const FREE_AGENT_QUOTA_LIMIT = 999_999;
 
 /**
  * Duration of the quota window in milliseconds (23 hours).

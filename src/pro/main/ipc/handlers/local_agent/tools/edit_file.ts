@@ -143,8 +143,9 @@ export const editFileTool: ToolDefinition<z.infer<typeof editFileSchema>> = {
   defaultConsent: "always",
   modifiesState: true,
 
-  // Requires Dyad Pro engine API
-  isEnabled: (ctx) => ctx.isDyadPro,
+  // Requires Dyad Pro engine API (bypassed when SKIP_PRO_LIMITATIONS=true)
+  isEnabled: (ctx) =>
+    ctx.isDyadPro || process.env.SKIP_PRO_LIMITATIONS === "true",
 
   getConsentPreview: (args) => `Edit ${args.path}`,
 

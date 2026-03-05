@@ -25,21 +25,24 @@ const typedHandle = createLoggedTypedHandler(logger);
 
 const dyadEngineUrl = process.env.DYAD_ENGINE_URL;
 
+function getMockUserBudget(): UserBudgetInfo {
+  const resetDate = new Date();
+  resetDate.setDate(resetDate.getDate() + 30); // Reset in 30 days
+  return {
+    usedCredits: 100,
+    totalCredits: 1000,
+    budgetResetDate: resetDate,
+    redactedUserId: "<redacted-user-id-testing>",
+    isTrial: false,
+  };
+}
+
 export function registerProHandlers() {
   // This method should try to avoid throwing errors because this is auxiliary
   // information and isn't critical to using the app
   handle("get-user-budget", async (): Promise<UserBudgetInfo | null> => {
     if (IS_TEST_BUILD) {
-      // Return mock budget data for E2E tests instead of spamming the API
-      const resetDate = new Date();
-      resetDate.setDate(resetDate.getDate() + 30); // Reset in 30 days
-      return {
-        usedCredits: 100,
-        totalCredits: 1000,
-        budgetResetDate: resetDate,
-        redactedUserId: "<redacted-user-id-testing>",
-        isTrial: false,
-      };
+      return getMockUserBudget();
     }
     logger.info("Attempting to fetch user budget information.");
 
@@ -49,6 +52,9 @@ export function registerProHandlers() {
 
     if (!apiKey) {
       logger.error("LLM Gateway API key (Dyad Pro) is not configured.");
+      if (process.env.SKIP_PRO_LIMITATIONS === "true") {
+        return getMockUserBudget();
+      }
       return null;
     }
 
@@ -70,6 +76,9 @@ export function registerProHandlers() {
         logger.error(
           `Failed to fetch user budget. Status: ${response.status}. Body: ${errorBody}`,
         );
+        if (process.env.SKIP_PRO_LIMITATIONS === "true") {
+          return getMockUserBudget();
+        }
         return null;
       }
 
@@ -98,6 +107,9 @@ export function registerProHandlers() {
       return userBudgetInfo;
     } catch (error: any) {
       logger.error(`Error fetching user budget: ${error.message}`, error);
+      if (process.env.SKIP_PRO_LIMITATIONS === "true") {
+        return getMockUserBudget();
+      }
       return null;
     }
   });
