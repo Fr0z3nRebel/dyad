@@ -56,6 +56,8 @@ const ignore = (file: string) => {
 };
 
 const isEndToEndTestBuild = process.env.E2E_TEST_BUILD === "true";
+const skipMacOsSign =
+  process.env.SKIP_MACOS_SIGN === "true" || isEndToEndTestBuild;
 const isWindowsSigningEnabled = process.env.WINDOWS_SIGN === "true";
 
 if (isWindowsSigningEnabled && !process.env.AZURE_CODE_SIGNING_DLIB) {
@@ -76,7 +78,7 @@ const config: ForgeConfig = {
     ],
     icon: "./assets/icon/logo",
 
-    osxSign: isEndToEndTestBuild
+    osxSign: skipMacOsSign
       ? undefined
       : ({
           identity: process.env.APPLE_TEAM_ID,
@@ -87,7 +89,7 @@ const config: ForgeConfig = {
           // and the cwd scan crashes on broken symlinks like CLAUDE.md)
           preEmbedProvisioningProfile: false,
         } as Record<string, unknown>),
-    osxNotarize: isEndToEndTestBuild
+    osxNotarize: skipMacOsSign
       ? undefined
       : {
           appleId: process.env.APPLE_ID!,

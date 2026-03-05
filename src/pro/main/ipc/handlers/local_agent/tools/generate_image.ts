@@ -123,7 +123,9 @@ export const generateImageTool: ToolDefinition<
   defaultConsent: "always",
   modifiesState: true,
 
-  isEnabled: (ctx) => ctx.isDyadPro,
+  // Pro-only (bypassed when SKIP_PRO_LIMITATIONS=true)
+  isEnabled: (ctx) =>
+    ctx.isDyadPro || process.env.SKIP_PRO_LIMITATIONS === "true",
 
   getConsentPreview: (args) => `Generate image: "${args.prompt}"`,
 

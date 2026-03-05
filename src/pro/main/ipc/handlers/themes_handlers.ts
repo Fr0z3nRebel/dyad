@@ -579,7 +579,10 @@ Modern dark theme with purple accents for testing.
         };
       }
 
-      if (!settings.enableDyadPro) {
+      if (
+        !settings.enableDyadPro &&
+        process.env.SKIP_PRO_LIMITATIONS !== "true"
+      ) {
         throw new Error(
           "Dyad Pro is required for AI theme generation. Please enable Dyad Pro in Settings.",
         );
@@ -707,7 +710,10 @@ Modern theme extracted from website for testing.
         };
       }
 
-      if (!settings.enableDyadPro) {
+      if (
+        !settings.enableDyadPro &&
+        process.env.SKIP_PRO_LIMITATIONS !== "true"
+      ) {
         throw new Error(
           "Dyad Pro is required for AI theme generation. Please enable Dyad Pro in Settings.",
         );

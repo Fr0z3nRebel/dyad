@@ -43,7 +43,8 @@ export function ChatModeSelector() {
   // Migration happens on read, so selectedChatMode will never be "agent"
   const selectedMode = settings?.selectedChatMode || "build";
   const isProEnabled = settings ? isDyadProEnabled(settings) : false;
-  const { messagesRemaining, isQuotaExceeded } = useFreeAgentQuota();
+  const { messagesRemaining, isQuotaExceeded, messagesLimit } =
+    useFreeAgentQuota();
   const { servers } = useMcp();
   const enabledMcpServersCount = servers.filter((s) => s.enabled).length;
 
@@ -181,8 +182,9 @@ export function ChatModeSelector() {
                   <Bot size={14} className="text-muted-foreground" />
                   <span className="font-medium">Basic Agent</span>
                   <span className="text-xs text-muted-foreground">
-                    ({isQuotaExceeded ? "0" : messagesRemaining}/5 remaining for
-                    today)
+                    {messagesLimit > 100
+                      ? "(Unlimited)"
+                      : `(${isQuotaExceeded ? "0" : messagesRemaining}/${messagesLimit} remaining for today)`}
                   </span>
                 </div>
                 <span className="text-xs text-muted-foreground ml-[22px]">
